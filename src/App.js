@@ -4,6 +4,7 @@ import { produce } from 'immer';
 const numRows = 40;
 const numCols = 40;
 
+//neighbours of current cell
 const neighbours = [
   [-1, -1], //NW
   [-1, 0],  //N
@@ -13,15 +14,19 @@ const neighbours = [
   [1, -1],  //SW
   [1, 0], //S
   [1, 1], //SW //[0,0] is not there as its the cell itself and we want neighbours
-]
+];
 
-const generateEmptyGrid = () => Array.from(Array(numRows), () => Array.from(Array(numCols), () => 0)) //setting up 2d array of numRows*numCols
+//setting up 2d array of numRows*numCols with all dead cell
+const generateEmptyGrid = () => Array.from(Array(numRows), () => Array.from(Array(numCols), () => 0));
+
+//setting up 2d array of numRows*numCols with random alive and dead cell
+const generateRandomFilledGrid = () => Array.from(Array(numRows), () => Array.from(Array(numCols), () => Math.random() > 0.7 ? 1 : 0));
 
 const App = () => {
 
-  const [grid, setGrid] = useState(() => generateEmptyGrid())
+  const [grid, setGrid] = useState(() => generateEmptyGrid());
   const [running, setRunning] = useState(false);
-  const runningRef = useRef(running)
+  const runningRef = useRef(running);
 
   runningRef.current = running;
 
@@ -40,7 +45,7 @@ const App = () => {
                 const newI = i + x;
                 const newJ = j + y;
                 if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols) { //checking bounds
-                  currentCellNeighbours += currGrid[newI][newJ] //count the number of neighbours it has.
+                  currentCellNeighbours += currGrid[newI][newJ]; //count the number of neighbours it has.
                 }
               })
               if (currentCellNeighbours < 2 || currentCellNeighbours > 3) {
@@ -57,7 +62,7 @@ const App = () => {
           }
         })
       })
-      setTimeout(runSimulation, 100)
+      setTimeout(runSimulation, 100);
     }, []);
 
 
@@ -72,10 +77,14 @@ const App = () => {
       }}>{running ? 'stop' : 'start'}</button>
 
       <button onClick={() => {
-        setRunning(false)
-        setGrid(generateEmptyGrid())
+        setRunning(false);
+        setGrid(generateEmptyGrid());
       }}>clear</button>
 
+      <button
+        onClick={() => {
+          setGrid(generateRandomFilledGrid());
+        }}>random</button>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${numCols},20px)` }}>
         {grid.map((gridRow, i) => gridRow.map((gridItem, j) => {
           return (
