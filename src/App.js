@@ -15,9 +15,11 @@ const neighbours = [
   [1, 1], //SW //[0,0] is not there as its the cell itself and we want neighbours
 ]
 
+const generateEmptyGrid = () => Array.from(Array(numRows), () => Array.from(Array(numCols), () => 0)) //setting up 2d array of numRows*numCols
+
 const App = () => {
 
-  const [grid, setGrid] = useState(Array.from(Array(numRows), () => Array.from(Array(numCols), () => 0))) //setting up 2d array of 50*50
+  const [grid, setGrid] = useState(() => generateEmptyGrid())
   const [running, setRunning] = useState(false);
   const runningRef = useRef(running)
 
@@ -68,6 +70,11 @@ const App = () => {
           runSimulation();
         }
       }}>{running ? 'stop' : 'start'}</button>
+
+      <button onClick={() => {
+        setRunning(false)
+        setGrid(generateEmptyGrid())
+      }}>clear</button>
 
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${numCols},20px)` }}>
         {grid.map((gridRow, i) => gridRow.map((gridItem, j) => {
