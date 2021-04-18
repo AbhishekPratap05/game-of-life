@@ -26,10 +26,14 @@ const App = () => {
   const [gridSize, setGridSize] = useState(40)
   const [grid, setGrid] = useState(() => generateEmptyGrid(gridSize));
   const [running, setRunning] = useState(false);
-  const [randomRange, setRandomRange] = useState(0.7)
+  const [next, setNext] = useState(false);
+  const [randomRange, setRandomRange] = useState(0.7);
+
   const runningRef = useRef(running);
+  const nextRef = useRef(next);
 
   runningRef.current = running;
+  nextRef.current = next;
 
   const runSimulation = useCallback(
     () => {
@@ -69,27 +73,42 @@ const App = () => {
         setRunning(false);
         return;
       }
-      setTimeout(runSimulation, 100);
+      if (!nextRef.current) {
+        setTimeout(runSimulation, 100);
+      } else {
+        setNext(false);
+        setRunning(false);
+        return;
+      }
     }, [gridSize]);
 
 
   return (
     <>
       <h2>Conway's Game of Life</h2>
-      <p>{gridSize}</p><p>{running}</p>
       <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '10px' }}>
         <button onClick={() => {
           setRunning(!running);
+          setNext(false);
           if (!running) {
             runningRef.current = true;
             runSimulation();
           }
         }}>{running ? 'stop' : 'start'}</button>
+        <button
+          onClick={() => {
+            setNext(true);
+            setRunning(true);
+            runningRef.current = true;
+            nextRef.current = true;
+            runSimulation();
+          }}>next</button>
 
-        <button onClick={() => {
-          setRunning(false);
-          setGrid(generateEmptyGrid(gridSize));
-        }}>clear</button>
+        <button
+          onClick={() => {
+            setRunning(false);
+            setGrid(generateEmptyGrid(gridSize));
+          }}>clear</button>
 
 
         <div>
@@ -101,8 +120,8 @@ const App = () => {
           <input
             type='range'
             id='randomRange'
-            min={0}
-            max={1}
+            min={0.1}
+            max={0.9}
             step={0.1}
             value={randomRange}
             onChange={(e) => {
