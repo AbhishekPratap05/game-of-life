@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { produce } from 'immer';
-import { TiMediaFastForward, TiMediaPause, TiMediaPlay, TiRefresh } from 'react-icons/ti'
+import { TiMediaFastForward, TiMediaPause, TiMediaPlay, TiRefresh, TiZoomIn, TiZoomOut } from 'react-icons/ti';
+import { FaRandom } from 'react-icons/fa';
 
 //neighbours of current cell
 const neighbours = [
@@ -21,7 +22,7 @@ const App = () => {
   const generateEmptyGrid = (value) => Array.from(Array(value), () => Array.from(Array(value), () => 0));
 
   //setting up 2d array of numRows*numCols with random alive and dead cell
-  const generateRandomFilledGrid = (value) => Array.from(Array(gridSize), () => Array.from(Array(gridSize), () => Math.random() > value ? 1 : 0));
+  const generateRandomFilledGrid = (value) => Array.from(Array(gridSize), () => Array.from(Array(gridSize), () => Math.random() > value ? 0 : 1));
 
 
   const [gridSize, setGridSize] = useState(40)
@@ -86,78 +87,77 @@ const App = () => {
 
   return (
     <>
-      <h1>Conway's Game of Life</h1>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: '10px',
-        margin: '20px auto',
-
-      }}>
-        {!running ?
-          <TiMediaPlay
+      <h1><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" rel="noreferrer" target='_blank' title='wikipedia link'>Conway's Game of Life</a></h1>
+      <div className='controlContainer'>
+        <div className='playPauseContainer'>
+          {!running ?
+            <TiMediaPlay
+              size='2em'
+              title='play'
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                setRunning(true);
+                setNext(false);
+                nextRef.current = false;
+                runningRef.current = true;
+                runSimulation();
+              }} />
+            :
+            <TiMediaPause
+              size='2em'
+              title='pause'
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                setRunning(false);
+                setNext(false);
+                nextRef.current = false;
+                runningRef.current = false;
+              }} />
+          }
+          <TiMediaFastForward
             size='2em'
-            title='play'
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
+            title='next'
+            style={{ color: !(running || next) ? 'grey' : undefined, cursor: (running || next) ? 'pointer' : 'not-allowed' }}
+            disabled={!(running || next)}
+            onClick={(e) => {
+              if (!(running || next)) {
+                e.preventDefault();
+                return;
+              }
+              setNext(true);
               setRunning(true);
-              setNext(false);
-              nextRef.current = false;
               runningRef.current = true;
+              nextRef.current = true;
               runSimulation();
             }} />
-          :
-          <TiMediaPause
+
+          <TiRefresh
+            title='reset'
             size='2em'
-            title='stop'
-            style={{ cursor: 'pointer' }}
             onClick={() => {
               setRunning(false);
               setNext(false);
-              nextRef.current = false;
               runningRef.current = false;
+              nextRef.current = false;
+              setGrid(generateEmptyGrid(gridSize));
             }} />
-        }
-        <TiMediaFastForward
-          size='2em'
-          title='next'
-          style={{ color: !(running || next) ? 'grey' : undefined, cursor: (running || next) ? 'pointer' : 'not-allowed' }}
-          disabled={!(running || next)}
-          onClick={(e) => {
-            if (!(running || next)) {
-              e.preventDefault();
-              return;
-            }
-            setNext(true);
-            setRunning(true);
-            runningRef.current = true;
-            nextRef.current = true;
-            runSimulation();
-          }} />
 
-        <TiRefresh
-          title='reset'
-          size='2em'
-
-          onClick={() => {
-            setRunning(false);
-            setNext(false);
-            runningRef.current = false;
-            nextRef.current = false;
-            setGrid(generateEmptyGrid(gridSize));
-          }} />
-
-
-        <div>
-          <button
+        </div>
+        <div
+          className='randomControl'
+        >
+          <FaRandom
+            size='1.3em'
+            title='create random alive cells'
             onClick={() => {
               setGrid(generateRandomFilledGrid(randomRange));
-            }}>random</button>
-
+            }} />
           <input
             type='range'
             id='randomRange'
+            title='set random alive cell'
+            className='slider'
+            style={{ marginTop: '45px', marginLeft: '-40px', position: 'absolute' }}
             min={0.1}
             max={0.9}
             step={0.1}
@@ -167,7 +167,7 @@ const App = () => {
               const newValue = parseFloat(e.target.value);
               setRandomRange(newValue);
               setGrid(generateRandomFilledGrid(newValue));
-            }} />{randomRange * 100}
+            }} />
         </div>
         <div>
           <input
@@ -181,25 +181,34 @@ const App = () => {
             onChange={(e) => {
               setRunning(false);
               const newValue = parseFloat(e.target.value);
-              setGridSize(parseInt(newValue));
-              setGrid(generateEmptyGrid(newValue));
+              if (!(newValue > 100 || newValue <= 0) && !isNaN(newValue)) {
+                setGridSize(parseInt(newValue));
+                setGrid(generateEmptyGrid(newValue));
+              }
             }} />
         </div>
-        <input
-          type='range'
-          id='randomRange'
-          min={0.5}
-          max={2.0}
-          step={0.1}
-          value={zoom}
-          onChange={(e) => {
-            const newValue = parseFloat(e.target.value);
-            console.log(newValue)
-            setZoom(newValue);
-          }} />{parseInt(zoom * 100)}
+        <div className='zoomControl'>
+          <TiZoomOut
+            size='1.4em'
+            title='zoom out'
+            onClick={() => {
+              !(zoom < 0.6) &&
+                setZoom((zoom - 0.2));
+            }}
+          />
+          {Math.round(zoom * 100)}
+          <TiZoomIn
+            size='1.4em'
+            title='zoom in'
+            onClick={() => {
+              !(zoom > 1.8) &&
+                setZoom((zoom + 0.2));
+            }}
+          />
+        </div>
         <button onClick={() => setZoom(1)}>reset zoom</button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${gridSize},20px)`, zoom: `${zoom}` }}>
+      <div style={{ display: 'grid', justifyContent: 'center', gridTemplateColumns: `repeat(${gridSize},20px)`, zoom: `${zoom}` }}>
         {grid.map((gridRow, i) => gridRow.map((gridItem, j) => {
           return (
             <div
