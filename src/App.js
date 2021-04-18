@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { produce } from 'immer';
+import { TiMediaFastForward, TiMediaPause, TiMediaPlay, TiRefresh } from 'react-icons/ti'
 
 //neighbours of current cell
 const neighbours = [
@@ -85,35 +86,67 @@ const App = () => {
 
   return (
     <>
-      <h2>Conway's Game of Life</h2>
-      <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '10px' }}>
-        <button onClick={() => {
-          setRunning(!running);
-          setNext(false);
-          nextRef.current = false;
-          if (!running) {
-            runningRef.current = true;
-            runSimulation();
-          }
-        }}>{running ? 'stop' : 'start'}</button>
-        <button
+      <h1>Conway's Game of Life</h1>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: '10px',
+        margin: '20px auto',
+
+      }}>
+        {!running ?
+          <TiMediaPlay
+            size='2em'
+            title='play'
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              setRunning(true);
+              setNext(false);
+              nextRef.current = false;
+              runningRef.current = true;
+              runSimulation();
+            }} />
+          :
+          <TiMediaPause
+            size='2em'
+            title='stop'
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              setRunning(false);
+              setNext(false);
+              nextRef.current = false;
+              runningRef.current = false;
+            }} />
+        }
+        <TiMediaFastForward
+          size='2em'
+          title='next'
+          style={{ color: !(running || next) ? 'grey' : undefined, cursor: (running || next) ? 'pointer' : 'not-allowed' }}
           disabled={!(running || next)}
-          onClick={() => {
+          onClick={(e) => {
+            if (!(running || next)) {
+              e.preventDefault();
+              return;
+            }
             setNext(true);
             setRunning(true);
             runningRef.current = true;
             nextRef.current = true;
             runSimulation();
-          }}>next</button>
+          }} />
 
-        <button
+        <TiRefresh
+          title='reset'
+          size='2em'
+
           onClick={() => {
             setRunning(false);
             setNext(false);
             runningRef.current = false;
             nextRef.current = false;
             setGrid(generateEmptyGrid(gridSize));
-          }}>clear</button>
+          }} />
 
 
         <div>
