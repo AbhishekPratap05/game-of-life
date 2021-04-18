@@ -77,7 +77,6 @@ const App = () => {
       if (!nextRef.current) {
         setTimeout(runSimulation, 100);
       } else {
-        setNext(false);
         setRunning(false);
         return;
       }
@@ -91,12 +90,14 @@ const App = () => {
         <button onClick={() => {
           setRunning(!running);
           setNext(false);
+          nextRef.current = false;
           if (!running) {
             runningRef.current = true;
             runSimulation();
           }
         }}>{running ? 'stop' : 'start'}</button>
         <button
+          disabled={!(running || next)}
           onClick={() => {
             setNext(true);
             setRunning(true);
@@ -108,6 +109,9 @@ const App = () => {
         <button
           onClick={() => {
             setRunning(false);
+            setNext(false);
+            runningRef.current = false;
+            nextRef.current = false;
             setGrid(generateEmptyGrid(gridSize));
           }}>clear</button>
 
