@@ -17,14 +17,14 @@ const App = () => {
 
 
   //setting up 2d array of numRows*numCols with all dead cell
-  const generateEmptyGrid = () => Array.from(Array(gridSize), () => Array.from(Array(gridSize), () => 0));
+  const generateEmptyGrid = (value) => Array.from(Array(value), () => Array.from(Array(value), () => 0));
 
   //setting up 2d array of numRows*numCols with random alive and dead cell
   const generateRandomFilledGrid = (value) => Array.from(Array(gridSize), () => Array.from(Array(gridSize), () => Math.random() > value ? 1 : 0));
 
 
   const [gridSize, setGridSize] = useState(40)
-  const [grid, setGrid] = useState(() => generateEmptyGrid());
+  const [grid, setGrid] = useState(() => generateEmptyGrid(gridSize));
   const [running, setRunning] = useState(false);
   const [randomRange, setRandomRange] = useState(0.7)
   const runningRef = useRef(running);
@@ -36,11 +36,13 @@ const App = () => {
       if (!runningRef.current) {
         return
       }
-      console.log("called")
+      console.log("called");
+      let deadCount = 0;
       setGrid((currGrid) => {
         return produce(currGrid, gridCopy => {
           for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
+              currGrid[i][j] === 0 && deadCount++;
               let currentCellNeighbours = 0;
               neighbours.forEach(([x, y]) => {
                 const newI = i + x;
@@ -63,6 +65,10 @@ const App = () => {
           }
         })
       })
+      if (deadCount === gridSize * gridSize) {
+        setRunning(false);
+        return;
+      }
       setTimeout(runSimulation, 100);
     }, [gridSize]);
 
@@ -82,7 +88,7 @@ const App = () => {
 
         <button onClick={() => {
           setRunning(false);
-          setGrid(generateEmptyGrid());
+          setGrid(generateEmptyGrid(gridSize));
         }}>clear</button>
 
 
@@ -117,8 +123,9 @@ const App = () => {
             value={gridSize}
             onChange={(e) => {
               setRunning(false);
-              setGridSize(parseInt(e.target.value));
-              setTimeout(setGrid(generateEmptyGrid()), 100);
+              const newValue = parseFloat(e.target.value);
+              setGridSize(parseInt(newValue));
+              setGrid(generateEmptyGrid(newValue));
             }} />
         </div>
       </div>
