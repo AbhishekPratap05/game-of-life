@@ -8,6 +8,7 @@ body {
 	margin: 0;
 	background-color: #1c1f20;
 	color: #fff;
+	user-select: none;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
 		'Droid Sans', 'Helvetica Neue', sans-serif;
 	-webkit-font-smoothing: antialiased;
@@ -22,29 +23,29 @@ body {
 	margin: 20px auto;
 	position: absolute;
 	padding: 10px 20px;
+	border-radius: 3px;
 	background-color: hsl(0, 0%, 15%, 0.8);
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: -o-grab;
+	cursor: -ms-grab;
+	cursor: grab;
+}
+.controlContainer:active {
+	cursor: -webkit-grabbing;
+	cursor: -moz-grabbing;
+	cursor: -o-grabbing;
+	cursor: -ms-grabbing;
+	cursor: grabbing;
 }
 
-.playPauseContainer {
+.controls {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
 	gap: 10px;
 }
 
-.randomControl {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	gap: 10px;
-}
-
-.zoomControl {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	gap: 10px;
-}
 /* slider */
 .slider {
 	-webkit-appearance: none;
@@ -81,15 +82,32 @@ body {
 }
 
 /* slider end */
+
+.icons {
+	cursor: pointer;
+}
 h1 {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	margin: 20px 0px;
-	user-select: none;
 }
 a {
 	text-decoration: none;
 	cursor: pointer;
 	color: #fff;
+}
+
+button {
+	padding: 4px 6px;
+	background-color: hsl(180, 100%, 25%);
+	opacity: 0.8;
+	border: none;
+	color: #fff;
+	font-size: 0.9em;
+	border-radius: 3px;
+	cursor: pointer;
+}
+button:hover {
+	opacity: 1;
 }
