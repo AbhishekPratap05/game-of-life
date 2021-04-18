@@ -28,6 +28,7 @@ const App = () => {
   const [running, setRunning] = useState(false);
   const [next, setNext] = useState(false);
   const [randomRange, setRandomRange] = useState(0.7);
+  const [zoom, setZoom] = useState(1.0);
 
   const runningRef = useRef(running);
   const nextRef = useRef(next);
@@ -147,8 +148,21 @@ const App = () => {
               setGrid(generateEmptyGrid(newValue));
             }} />
         </div>
+        <input
+          type='range'
+          id='randomRange'
+          min={0.5}
+          max={2.0}
+          step={0.1}
+          value={zoom}
+          onChange={(e) => {
+            const newValue = parseFloat(e.target.value);
+            console.log(newValue)
+            setZoom(newValue);
+          }} />{parseInt(zoom * 100)}
+        <button onClick={() => setZoom(1)}>reset zoom</button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${gridSize},20px)` }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${gridSize},20px)`, zoom: `${zoom}` }}>
         {grid.map((gridRow, i) => gridRow.map((gridItem, j) => {
           return (
             <div
