@@ -19,19 +19,25 @@ body {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	gap: 2.5em;
-	margin: 20px auto;
 	position: absolute;
-	padding: 10px 20px;
+	padding: 10px 10px 20px 20px;
 	border-radius: 3px;
 	background-color: hsl(0, 0%, 15%, 0.8);
+}
+
+.controlContainer:hover {
+	box-shadow: teal 0 1px 3px;
+}
+
+.drag {
+	margin-top: 5px;
 	cursor: -webkit-grab;
 	cursor: -moz-grab;
 	cursor: -o-grab;
 	cursor: -ms-grab;
 	cursor: grab;
 }
-.controlContainer:active {
+.drag:active {
 	cursor: -webkit-grabbing;
 	cursor: -moz-grabbing;
 	cursor: -o-grabbing;
@@ -39,11 +45,19 @@ body {
 	cursor: grabbing;
 }
 
+.actionControlsContainer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 2.5em;
+}
+
 .controls {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
+	padding: 0 0 0 15px;
 }
 
 /* slider */
@@ -57,6 +71,8 @@ body {
 	opacity: 0.7;
 	-webkit-transition: .2s;
 	transition: opacity .2s;
+	margin-top: 45px;
+	position: absolute;
 }
 
 .slider:hover {
@@ -77,7 +93,7 @@ body {
 	width: 25px;
 	height: 25px;
 	border-radius: 50%;
-	background: #4caf50;
+	background: #008080;
 	cursor: pointer;
 }
 
