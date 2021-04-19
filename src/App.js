@@ -1,5 +1,8 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { produce } from 'immer';
+import { TiMediaFastForward, TiMediaPause, TiMediaPlay, TiRefresh, TiZoomIn, TiZoomOut, TiPlus, TiMinus, TiArrowMove } from 'react-icons/ti';
+import { FaRandom } from 'react-icons/fa';
+import { dragElement } from './dragFunction';
 
 //neighbours of current cell
 const neighbours = [
@@ -20,18 +23,20 @@ const App = () => {
   const generateEmptyGrid = (value) => Array.from(Array(value), () => Array.from(Array(value), () => 0));
 
   //setting up 2d array of numRows*numCols with random alive and dead cell
-  const generateRandomFilledGrid = (value) => Array.from(Array(gridSize), () => Array.from(Array(gridSize), () => Math.random() > value ? 1 : 0));
+  const generateRandomFilledGrid = (value) => Array.from(Array(gridSize), () => Array.from(Array(gridSize), () => Math.random() > value ? 0 : 1));
 
 
   const [gridSize, setGridSize] = useState(40)
   const [grid, setGrid] = useState(() => generateEmptyGrid(gridSize));
   const [running, setRunning] = useState(false);
   const [next, setNext] = useState(false);
-  const [randomRange, setRandomRange] = useState(0.7);
+  const [randomRange, setRandomRange] = useState(0.3);
   const [zoom, setZoom] = useState(1.0);
 
   const runningRef = useRef(running);
   const nextRef = useRef(next);
+  const controlRef = useRef();
+  const dragRef = useRef();
 
   runningRef.current = running;
   nextRef.current = next;
@@ -82,96 +87,173 @@ const App = () => {
       }
     }, [gridSize]);
 
+  useEffect(
+    () => {
+
+      dragElement(dragRef.current, controlRef.current)
+    },
+    [],
+  )
 
   return (
     <>
-      <h2>Conway's Game of Life</h2>
-      <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '10px' }}>
-        <button onClick={() => {
-          setRunning(!running);
-          setNext(false);
-          nextRef.current = false;
-          if (!running) {
-            runningRef.current = true;
-            runSimulation();
-          }
-        }}>{running ? 'stop' : 'start'}</button>
-        <button
-          disabled={!(running || next)}
-          onClick={() => {
-            setNext(true);
-            setRunning(true);
-            runningRef.current = true;
-            nextRef.current = true;
-            runSimulation();
-          }}>next</button>
+      <h1><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" rel="noreferrer" target='_blank' title='wikipedia link'>Conway's Game of Life</a></h1>
+      <div className='controlContainer' id='control' ref={controlRef}>
+        <div title='drag to move' className='drag' ref={dragRef}><TiArrowMove size='1.7em' /></div>
+        <div className='actionControlsContainer'>
+          <div className='controls'>
+            {!running ?
+              <TiMediaPlay
+                size='1.9em'
+                title='play'
+                className='icons'
+                onClick={() => {
+                  setRunning(true);
+                  setNext(false);
+                  nextRef.current = false;
+                  runningRef.current = true;
+                  runSimulation();
+                }} />
+              :
+              <TiMediaPause
+                size='1.9em'
+                title='pause'
+                className='icons'
+                onClick={() => {
+                  setRunning(false);
+                  setNext(false);
+                  nextRef.current = false;
+                  runningRef.current = false;
+                }} />
+            }
+            <TiMediaFastForward
+              size='1.9em'
+              title='next'
+              style={{ color: !(running || next) ? '#494949' : undefined, cursor: (running || next) ? 'pointer' : 'not-allowed' }}
+              disabled={!(running || next)}
+              onClick={(e) => {
+                if (!(running || next)) {
+                  e.preventDefault();
+                  return;
+                }
+                setNext(true);
+                setRunning(true);
+                runningRef.current = true;
+                nextRef.current = true;
+                runSimulation();
+              }} />
 
-        <button
-          onClick={() => {
-            setRunning(false);
-            setNext(false);
-            runningRef.current = false;
-            nextRef.current = false;
-            setGrid(generateEmptyGrid(gridSize));
-          }}>clear</button>
+            <TiRefresh
+              title='reset'
+              size='1.9em'
+              className='icons'
+              onClick={() => {
+                setRunning(false);
+                setNext(false);
+                runningRef.current = false;
+                nextRef.current = false;
+                setGrid(generateEmptyGrid(gridSize));
+              }} />
 
+          </div>
+          <div
+            className='controls'
+          >
+            <FaRandom
+              size='1.3em'
+              title='create random alive cells'
+              className='icons'
+              onClick={() => {
+                setGrid(generateRandomFilledGrid(randomRange));
+              }} />
+            <input
+              type='range'
+              id='randomRange'
+              title='set random alive cell'
+              className='slider'
+              min={0.1}
+              max={0.9}
+              step={0.1}
+              value={randomRange}
+              onChange={(e) => {
+                setRunning(false);
+                const newValue = parseFloat(e.target.value);
+                setRandomRange(newValue);
+                setGrid(generateRandomFilledGrid(newValue));
+              }} />
+          </div>
+          <div
+            className='controls'
+          >
+            <TiMinus
+              size='1.4em'
+              title='reduce grid size'
+              className='icons'
+              onClick={() => {
+                if (!(gridSize < 20)) {
+                  gridSize === 40 && setZoom((1.2));
+                  gridSize === 50 && setZoom((1));
+                  gridSize === 60 && setZoom((0.8));
+                  gridSize === 80 && setZoom((0.6));
+                  gridSize === 90 && setZoom((0.4));
+                  setRunning(false);
+                  const newValue = gridSize - 10;
+                  setGridSize(newValue);
+                  setGrid(generateEmptyGrid(newValue));
+                }
+              }}
+            />
+            <span title='grid size'>{gridSize}</span>
+            <TiPlus
+              size='1.4em'
+              title='increase grid size'
+              className='icons'
+              onClick={() => {
+                if (!(gridSize > 90)) {
+                  gridSize === 20 && setZoom((1.2));
+                  gridSize === 30 && setZoom((1));
+                  gridSize === 40 && setZoom((0.8));
+                  gridSize === 50 && setZoom((0.6));
+                  gridSize === 70 && setZoom((0.4));
 
-        <div>
-          <button
-            onClick={() => {
-              setGrid(generateRandomFilledGrid(randomRange));
-            }}>random</button>
-
-          <input
-            type='range'
-            id='randomRange'
-            min={0.1}
-            max={0.9}
-            step={0.1}
-            value={randomRange}
-            onChange={(e) => {
-              setRunning(false);
-              const newValue = parseFloat(e.target.value);
-              setRandomRange(newValue);
-              setGrid(generateRandomFilledGrid(newValue));
-            }} />{randomRange * 100}
+                  setRunning(false);
+                  const newValue = gridSize + 10;
+                  setGridSize(newValue);
+                  setGrid(generateEmptyGrid(newValue));
+                }
+              }}
+            />
+          </div>
+          <div className='controls'>
+            <TiZoomOut
+              size='1.4em'
+              title='zoom out'
+              className='icons'
+              onClick={() => {
+                !(zoom < 0.6) &&
+                  setZoom((zoom - 0.2));
+              }}
+            />
+            <span title='zoom value'>{Math.round(zoom * 100)}</span>
+            <TiZoomIn
+              size='1.4em'
+              title='zoom in'
+              className='icons'
+              onClick={() => {
+                !(zoom > 1.8) &&
+                  setZoom((zoom + 0.2));
+              }}
+            />
+            <button title='reset zoom' onClick={() => setZoom(1)}>reset</button>
+          </div>
         </div>
-        <div>
-          <input
-            type='number'
-            id='gridRange'
-            min={10}
-            max={100}
-            step={10}
-            placeholder={'number of rows and columns'}
-            value={gridSize}
-            onChange={(e) => {
-              setRunning(false);
-              const newValue = parseFloat(e.target.value);
-              setGridSize(parseInt(newValue));
-              setGrid(generateEmptyGrid(newValue));
-            }} />
-        </div>
-        <input
-          type='range'
-          id='randomRange'
-          min={0.5}
-          max={2.0}
-          step={0.1}
-          value={zoom}
-          onChange={(e) => {
-            const newValue = parseFloat(e.target.value);
-            console.log(newValue)
-            setZoom(newValue);
-          }} />{parseInt(zoom * 100)}
-        <button onClick={() => setZoom(1)}>reset zoom</button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${gridSize},20px)`, zoom: `${zoom}` }}>
+      <div style={{ display: 'grid', justifyContent: 'center', gridTemplateColumns: `repeat(${gridSize},20px)`, zoom: `${zoom}` }}>
         {grid.map((gridRow, i) => gridRow.map((gridItem, j) => {
           return (
             <div
               key={`${i}-${j}`}
-              style={{ width: '20px', height: '20px', border: '1px solid black', backgroundColor: gridItem ? 'teal' : undefined }}
+              style={{ width: '20px', height: '20px', outline: '1px solid #494949', backgroundColor: gridItem ? 'teal' : undefined }}
               onClick={() => {
                 const newGrid = produce(grid, gridCopy => {
                   gridCopy[i][j] = grid[i][j] ? 0 : 1;

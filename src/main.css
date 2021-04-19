@@ -1,0 +1,129 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background-color: #1c1f20;
+	color: #fff;
+	user-select: none;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+		'Droid Sans', 'Helvetica Neue', sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.controlContainer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	position: absolute;
+	padding: 10px 10px 20px 20px;
+	border-radius: 3px;
+	background-color: hsl(0, 0%, 15%, 0.8);
+}
+
+.controlContainer:hover {
+	box-shadow: teal 0 1px 3px;
+}
+
+.drag {
+	margin-top: 5px;
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: -o-grab;
+	cursor: -ms-grab;
+	cursor: grab;
+}
+.drag:active {
+	cursor: -webkit-grabbing;
+	cursor: -moz-grabbing;
+	cursor: -o-grabbing;
+	cursor: -ms-grabbing;
+	cursor: grabbing;
+}
+
+.actionControlsContainer {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 2.5em;
+}
+
+.controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	padding: 0 0 0 15px;
+}
+
+/* slider */
+.slider {
+	-webkit-appearance: none;
+	width: 100px;
+	height: 5px;
+	border-radius: 5px;
+	background: #d3d3d3;
+	outline: none;
+	opacity: 0.7;
+	-webkit-transition: .2s;
+	transition: opacity .2s;
+	margin-top: 45px;
+	position: absolute;
+}
+
+.slider:hover {
+	opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: hsl(180, 100%, 25%);
+	cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	background: #008080;
+	cursor: pointer;
+}
+
+/* slider end */
+
+.icons {
+	cursor: pointer;
+}
+h1 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 20px 0px;
+}
+a {
+	text-decoration: none;
+	cursor: pointer;
+	color: #fff;
+}
+
+button {
+	padding: 4px 6px;
+	background-color: hsl(180, 100%, 25%);
+	opacity: 0.8;
+	border: none;
+	color: #fff;
+	font-size: 0.9em;
+	border-radius: 3px;
+	cursor: pointer;
+}
+button:hover {
+	opacity: 1;
+}
