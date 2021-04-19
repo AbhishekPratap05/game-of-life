@@ -191,11 +191,15 @@ const App = () => {
               className='icons'
               onClick={() => {
                 if (!(gridSize < 20)) {
+                  gridSize === 20 && setZoom((1.2));
+                  gridSize === 30 && setZoom((1.2));
                   gridSize === 40 && setZoom((1.2));
                   gridSize === 50 && setZoom((1));
                   gridSize === 60 && setZoom((0.8));
+                  gridSize === 70 && setZoom((0.6));
                   gridSize === 80 && setZoom((0.6));
                   gridSize === 90 && setZoom((0.4));
+                  gridSize === 100 && setZoom((0.4));
                   setRunning(false);
                   const newValue = gridSize - 10;
                   setGridSize(newValue);
@@ -210,11 +214,15 @@ const App = () => {
               className='icons'
               onClick={() => {
                 if (!(gridSize > 90)) {
+                  gridSize === 10 && setZoom((1.2));
                   gridSize === 20 && setZoom((1.2));
                   gridSize === 30 && setZoom((1));
                   gridSize === 40 && setZoom((0.8));
                   gridSize === 50 && setZoom((0.6));
+                  gridSize === 60 && setZoom((0.6));
                   gridSize === 70 && setZoom((0.4));
+                  gridSize === 80 && setZoom((0.4));
+                  gridSize === 90 && setZoom((0.4));
 
                   setRunning(false);
                   const newValue = gridSize + 10;
