@@ -36,6 +36,20 @@ body {
 	cursor: -o-grab;
 	cursor: -ms-grab;
 	cursor: grab;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 20px;
+}
+.drag::before {
+	display: inline-block;
+	content: '.';
+	position: absolute;
+	top: 0px;
+	font-size: 2.5em;
+	line-height: 10px;
+	color: #008080;
+	text-shadow: 0 6px #008080, 0 12px #008080, 6px 0 #008080, 6px 6px #008080, 6px 12px #008080, 12px 0 #008080,
+		12px 6px #008080, 12px 12px #008080;
 }
 .drag:active {
 	cursor: -webkit-grabbing;

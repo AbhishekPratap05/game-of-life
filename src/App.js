@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { produce } from 'immer';
-import { TiMediaFastForward, TiMediaPause, TiMediaPlay, TiRefresh, TiZoomIn, TiZoomOut, TiPlus, TiMinus, TiArrowMove } from 'react-icons/ti';
+import { TiMediaFastForward, TiMediaPause, TiMediaPlay, TiRefresh, TiZoomIn, TiZoomOut, TiPlus, TiMinus } from 'react-icons/ti';
 import { FaRandom } from 'react-icons/fa';
 import { dragElement } from './dragFunction';
 
@@ -27,10 +27,10 @@ const App = () => {
 
 
   const [gridSize, setGridSize] = useState(40)
-  const [grid, setGrid] = useState(() => generateEmptyGrid(gridSize));
+  const [randomRange, setRandomRange] = useState(0.3);
+  const [grid, setGrid] = useState(() => generateRandomFilledGrid(randomRange));
   const [running, setRunning] = useState(false);
   const [next, setNext] = useState(false);
-  const [randomRange, setRandomRange] = useState(0.3);
   const [zoom, setZoom] = useState(1.0);
 
   const runningRef = useRef(running);
@@ -46,7 +46,6 @@ const App = () => {
       if (!runningRef.current) {
         return
       }
-      console.log("called");
       let deadCount = 0;
       setGrid((currGrid) => {
         return produce(currGrid, gridCopy => {
@@ -99,7 +98,7 @@ const App = () => {
     <>
       <h1><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" rel="noreferrer" target='_blank' title='wikipedia link'>Conway's Game of Life</a></h1>
       <div className='controlContainer' id='control' ref={controlRef}>
-        <div title='drag to move' className='drag' ref={dragRef}><TiArrowMove size='1.7em' /></div>
+        <div title='drag to move' className='drag' ref={dragRef}></div>
         <div className='actionControlsContainer'>
           <div className='controls'>
             {!running ?
